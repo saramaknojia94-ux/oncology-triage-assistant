@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 st.set_page_config(
-    page_title="Oncology Triage Documentation",
+    page_title="OncoTriage Assistant",
     page_icon="🩺",
     layout="centered",
 )
@@ -122,9 +122,9 @@ st.markdown("""
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
   <div style="width:32px;height:32px;border-radius:8px;background:#e1f5ee;
        display:flex;align-items:center;justify-content:center;font-size:18px;">🩺</div>
-  <span style="font-size:18px;font-weight:500;color:#111827;">Oncology triage documentation</span>
+  <span style="font-size:18px;font-weight:500;color:var(--text-color);">OncoTriage Assistant</span>
 </div>
-<p style="font-size:13px;color:#6b7280;margin-bottom:1rem;">
+<p style="font-size:13px;color:var(--text-color);opacity:0.6;margin-bottom:1rem;">
   Structured symptom screener — complete all sections, then generate a provider-ready summary
 </p>
 """, unsafe_allow_html=True)
@@ -255,7 +255,7 @@ with st.container(border=True):
     if meds_sel:
         st.markdown(
             '<div style="background:#f9fafb;border-radius:8px;padding:10px;margin-top:8px;'
-            'display:flex;align-items:center;gap:8px;font-size:12px;color:#6b7280;">⏱️ Last dose</div>',
+            'display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-color);opacity:0.6;">⏱️ Last dose</div>',
             unsafe_allow_html=True,
         )
         mt_c1, mt_c2 = st.columns([1, 2])
