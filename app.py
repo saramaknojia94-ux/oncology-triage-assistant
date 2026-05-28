@@ -21,21 +21,23 @@ section.main > div { max-width: 720px; margin: 0 auto; }
     display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0;
 }
 .icon-box.danger { background:#fcebeb; }
-.card-title { font-size:14px; font-weight:600; color:#111827; margin:0; }
-.card-sub   { font-size:12px; color:#6b7280; margin:0; }
+.card-title { font-size:14px; font-weight:600; color:var(--text-color); margin:0; }
+.card-sub   { font-size:12px; color:var(--text-color); opacity:0.6; margin:0; }
 .sym-grid   { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:4px; }
 .sym-btn    { display:flex; align-items:center; gap:8px; padding:9px 12px;
-              border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111827; background:white; }
+              border:1px solid rgba(128,128,128,0.25); border-radius:8px;
+              font-size:13px; color:var(--text-color); background:transparent; }
 .sym-btn.active   { background:#e1f5ee; border-color:#5dcaa5; color:#085041; font-weight:500; }
 .sym-btn.disabled { opacity:0.38; }
 .soon-badge { margin-left:auto; font-size:10px; padding:2px 6px;
-              background:#f3f4f6; border-radius:4px; color:#9ca3af; }
+              background:rgba(128,128,128,0.15); border-radius:4px;
+              color:var(--text-color); opacity:0.55; }
 .face-row   { display:flex; justify-content:space-between; margin-top:10px; }
 .face-item  { display:flex; flex-direction:column; align-items:center; gap:4px; flex:1; }
-.face-circle { width:36px; height:36px; border-radius:50%; border:1px solid #e5e7eb;
+.face-circle { width:36px; height:36px; border-radius:50%; border:1px solid rgba(128,128,128,0.3);
                display:flex; align-items:center; justify-content:center; margin:0 auto; }
-.face-lbl   { font-size:10px; color:#9ca3af; text-align:center; }
-.face-score { font-size:11px; font-weight:500; color:#6b7280; }
+.face-lbl   { font-size:10px; color:var(--text-color); opacity:0.5; text-align:center; }
+.face-score { font-size:11px; font-weight:500; color:var(--text-color); opacity:0.7; }
 .urg-badge  { display:inline-flex; align-items:center; gap:5px; font-size:12px;
               padding:4px 10px; border-radius:8px; background:#fcebeb; color:#a32d2d; font-weight:500; }
 </style>
