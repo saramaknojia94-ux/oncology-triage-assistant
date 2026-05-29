@@ -8,7 +8,7 @@ A symptom screener for oncology nurses doing after-hours triage. You walk throug
 
 ## Why I built this
 
-After-hours triage calls are fast and high-stakes. A lot of nurses (myself included) end up writing free-text notes on the fly, and it's easy to miss things like when the patient last took something, whether the pain is new or chronic, what the trajectory has been. The summary ends up inconsistent depending on who took the call.
+After-hours triage calls are fast and high-stakes. A lot of nurses end up writing free-text notes on the fly, and it's easy to miss things like when the patient last took something, whether the pain is new or chronic, what the trajectory has been. The summary ends up inconsistent depending on who took the call.
 
 This tool guides you through the intake systematically, flags anything urgent, and spits out a standardized summary. No more starting from a blank box.
 
