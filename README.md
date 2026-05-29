@@ -1,14 +1,16 @@
-# Oncology Nurse Triage Documentation Assistant
+# OncoTriage Assistant
 
-A structured symptom screener that helps oncology nurses collect a complete headache intake and generate a provider-ready clinical summary in seconds — reducing documentation burden and standardizing triage hand-offs.
+A symptom screener for oncology nurses doing after-hours triage. You walk through a structured intake form, and it generates a clean clinical summary you can paste straight into the EHR or read off to a provider.
 
-**[Live demo →][(https://your-app-name.streamlit.app](https://oncology-triage-assistant-evaizat8jgk7yalym7gpeh.streamlit.app/))**
+**[Live demo →](https://oncology-triage-assistant-evaizat8jgk7yalym7gpeh.streamlit.app/)**
 
 ---
 
-## The clinical problem it solves
+## Why I built this
 
-Oncology nurses fielding after-hours triage calls often document in free text, which varies in completeness and format. Key details — safety flags, medication timing, pain trajectory — are easy to omit under time pressure. This tool guides the nurse through a structured screener, ensures no required field is skipped, and produces a consistent, provider-ready summary that can be pasted directly into the EHR or handed off verbally.
+After-hours triage calls are fast and high-stakes. A lot of nurses (myself included) end up writing free-text notes on the fly, and it's easy to miss things — when the patient last took something, whether the pain is new or chronic, what the trajectory has been. The summary ends up inconsistent depending on who took the call.
+
+This tool guides you through the intake systematically, flags anything urgent, and spits out a standardized summary. No more starting from a blank box.
 
 ---
 
@@ -23,32 +25,28 @@ Oncology nurses fielding after-hours triage calls often document in free text, w
 
 ---
 
-## How the AI prompt was designed
+## How the prompt works
 
-The prompt is **role-scoped, format-constrained, and data-driven**:
-
-1. **Role framing** — "You are a clinical documentation assistant…" constrains the model to documentation tasks only; it will not offer diagnoses or recommendations.
-2. **Style rules** — past tense, third person, one paragraph, 3–5 sentences. This matches the format expected in oncology triage notes and keeps output paste-ready.
-3. **Structured data injection** — all form fields are serialized as labeled key-value pairs. This gives the model a deterministic input format and prevents it from inferring missing data.
-4. **Explicit scope boundary** — "Do not add recommendations or diagnoses" prevents the model from overstepping clinical boundaries — important for a nurse-facing tool.
-5. **Safety flag forwarding** — if any safety flags are checked, they appear verbatim in the prompt and trigger an "Urgent flags present" badge in the UI. The model surfaces them in the summary without interpreting them.
+The model is instructed to act as a clinical documentation assistant — not a clinician. It won't offer diagnoses or recommendations. The output is always past tense, third person, one paragraph — the format you'd expect in a triage note. All the form fields get passed in as labeled values so the model isn't guessing at anything. If a safety flag is checked, it shows up verbatim in the summary and triggers an "Urgent flags present" badge in the UI.
 
 ---
 
-## Features
+## What's in it right now
 
-- **Symptom selector** — headache screener active; 7 future symptoms shown with "soon" badges
-- **Face pain scale** — 6 illustrated faces sync live with the 0–10 slider
-- **Conditional medication timing** — time input and relief question appear only when a medication is selected (not for "nothing tried")
-- **Safety flags** — any checked flag triggers a red "Urgent flags present" badge on the generated summary
-- **Copy-to-clipboard** — native copy button on the summary code block
+- Headache screener (full intake)
+- Face pain scale — 6 illustrated faces that sync with the 0–10 slider
+- Medication timing fields that only appear when a medication was actually taken
+- Safety flag detection with a red urgent badge on the summary
+- Copy button on the generated summary
+
+Seven more symptom screeners are stubbed in with "coming soon" badges: nausea/vomiting, fever/chills, shortness of breath, fatigue, diarrhea, bleeding, muscle pain.
 
 ---
 
-## Local setup
+## Run it locally
 
 ```bash
-git clone https://github.com/your-username/oncology-triage-assistant
+git clone https://github.com/saramaknojia94-ux/oncology-triage-assistant
 cd oncology-triage-assistant
 
 pip install -r requirements.txt
@@ -61,18 +59,12 @@ streamlit run app.py
 
 ---
 
-## Deploying to Streamlit Cloud
+## Deploy to Streamlit Cloud
 
-1. Push this repo to GitHub (`.env` is gitignored — never commit it)
-2. Go to [share.streamlit.io](https://share.streamlit.io) → **New app** → select your repo → `app.py`
+1. Push to GitHub (`.env` is gitignored — don't commit it)
+2. Go to [share.streamlit.io](https://share.streamlit.io) → **New app** → pick your repo → `app.py`
 3. Under **Advanced settings → Secrets**, add:
    ```toml
    ANTHROPIC_API_KEY = "sk-ant-..."
    ```
-4. Click **Deploy**
-
----
-
-## Roadmap
-
-Additional symptom screeners planned: nausea/vomiting, fever/chills, shortness of breath, fatigue, diarrhea, bleeding, muscle pain.
+4. Deploy
