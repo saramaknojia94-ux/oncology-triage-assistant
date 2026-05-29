@@ -2,7 +2,7 @@
 
 A structured symptom screener that helps oncology nurses collect a complete headache intake and generate a provider-ready clinical summary in seconds — reducing documentation burden and standardizing triage hand-offs.
 
-**[Live demo →](https://your-app-name.streamlit.app)**
+**[Live demo →][(https://your-app-name.streamlit.app](https://oncology-triage-assistant-evaizat8jgk7yalym7gpeh.streamlit.app/))**
 
 ---
 
