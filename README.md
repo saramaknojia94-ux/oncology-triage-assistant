@@ -41,30 +41,3 @@ The model is instructed to act as a clinical documentation assistant, not a clin
 
 Seven more symptom screeners are stubbed in with "coming soon" badges: nausea/vomiting, fever/chills, shortness of breath, fatigue, diarrhea, bleeding, muscle pain.
 
----
-
-## Run it locally
-
-```bash
-git clone https://github.com/saramaknojia94-ux/oncology-triage-assistant
-cd oncology-triage-assistant
-
-pip install -r requirements.txt
-
-# Create .env with your Anthropic API key
-echo ANTHROPIC_API_KEY=sk-ant-... > .env
-
-streamlit run app.py
-```
-
----
-
-## Deploy to Streamlit Cloud
-
-1. Push to GitHub (`.env` is gitignored, don't commit it)
-2. Go to [share.streamlit.io](https://share.streamlit.io), click New App, pick your repo, and select `app.py`
-3. Under Advanced Settings, add your secret:
-   ```toml
-   ANTHROPIC_API_KEY = "sk-ant-..."
-   ```
-4. Deploy
