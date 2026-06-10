@@ -61,6 +61,7 @@ NV_ACTUAL_MED_KEYS = [k for k, _ in NV_ANTIEMETIC_KEYS]
 _defaults = {
     "summary": None,
     "summary_had_flags": False,
+    "active_symptom_sel": "Headache",
     # headache meds
     "med_nothing": False,
     "med_tylenol": False,
@@ -135,6 +136,22 @@ with st.container(border=True):
     ])
     last_tx = st.text_input("Last treatment date", placeholder="e.g. 4 days ago / June 3")
 
+    st.markdown('<hr style="margin:12px 0 8px 0;border-color:#e5e7eb;"><div style="font-size:12px;font-weight:600;color:var(--text-color);margin-bottom:8px;opacity:0.7;">Treatment details</div>', unsafe_allow_html=True)
+
+    td1, td2, td3 = st.columns(3)
+    nv_regimen = td1.text_input("Regimen", placeholder="e.g. FOLFOX, AC-T", key="pc_regimen")
+    nv_cycle   = td2.number_input("Cycle #", min_value=1, max_value=50, value=None, step=1, key="pc_cycle")
+    nv_day     = td3.number_input("Day of cycle", min_value=1, max_value=28, value=None, step=1, key="pc_day")
+
+    nv_route = st.selectbox("Route", [
+        "", "IV", "Oral", "Radiation", "Combination IV + oral", "Other",
+    ], key="pc_route")
+
+    nv_neutropenia = st.checkbox("Known neutropenia risk or recent low ANC?", key="pc_neutropenia")
+
+    nv_oral_chemo_meds = st.text_input("Current oral cancer medications",
+        placeholder="e.g. capecitabine, ibrutinib, lenalidomide", key="pc_oral_chemo")
+
 # ─────────────────────────────────────────────────────────────────────────────
 # SHARED: SYMPTOM SELECTOR
 # ─────────────────────────────────────────────────────────────────────────────
@@ -146,16 +163,20 @@ with st.container(border=True):
            <div class="card-sub">Select active symptom screener</div></div>
     </div>""", unsafe_allow_html=True)
 
-    active_symptom = st.radio(
-        "symptom",
-        ["Headache", "Nausea / Vomiting"],
-        horizontal=True,
-        label_visibility="collapsed",
-        key="active_symptom_sel",
-    )
+    sc1, sc2 = st.columns(2)
+    for col, (icon, sym) in zip([sc1, sc2], [("🧠", "Headache"), ("🤢", "Nausea / Vomiting")]):
+        is_sel = st.session_state.get("active_symptom_sel", "Headache") == sym
+        if col.button(
+            f"{'✓  ' if is_sel else ''}{icon}  {sym}",
+            key=f"sym_btn_{sym.replace(' ', '_').replace('/', '_')}",
+            use_container_width=True,
+            type="primary" if is_sel else "secondary",
+        ):
+            st.session_state["active_symptom_sel"] = sym
+            st.rerun()
 
     st.markdown("""
-    <div class="sym-grid" style="margin-top:10px;">
+    <div class="sym-grid" style="margin-top:4px;">
       <div class="sym-btn disabled">🏃 Muscle pain / myalgia <span class="soon-badge">soon</span></div>
       <div class="sym-btn disabled">🌊 Diarrhea <span class="soon-badge">soon</span></div>
       <div class="sym-btn disabled">🩸 Bleeding / bruising <span class="soon-badge">soon</span></div>
@@ -164,6 +185,8 @@ with st.container(border=True):
       <div class="sym-btn disabled">🌡️ Fever / chills <span class="soon-badge">soon</span></div>
     </div>
     """, unsafe_allow_html=True)
+
+active_symptom = st.session_state.get("active_symptom_sel", "Headache")
 
 # ═════════════════════════════════════════════════════════════════════════════
 # SCREENER: HEADACHE
@@ -304,6 +327,12 @@ if active_symptom == "Headache":
             f"Triage data:\n"
             f"- Patient: {int(age)} y/o with {dx}, on {tx}"
             f"{f', last treatment {last_tx}' if last_tx else ''}\n"
+            f"- Regimen: {nv_regimen or 'not specified'}"
+            f"{f', Cycle {int(nv_cycle)}' if nv_cycle else ''}"
+            f"{f', Day {int(nv_day)}' if nv_day else ''}"
+            f"{f', {nv_route}' if nv_route else ''}\n"
+            f"- Neutropenia risk: {'yes' if nv_neutropenia else 'no'}\n"
+            f"- Oral cancer meds: {nv_oral_chemo_meds or 'none listed'}\n"
             f"- Chief complaint: Headache — {', '.join(location)}, onset {onset_txt}"
             f"{f', {onset_char}' if onset_char else ''}{f', {trajectory}' if trajectory else ''}\n"
             f"- Pain: {pain}/10\n"
@@ -338,30 +367,7 @@ if active_symptom == "Headache":
 # ═════════════════════════════════════════════════════════════════════════════
 elif active_symptom == "Nausea / Vomiting":
 
-    # Treatment context (CINV classification)
-    with st.container(border=True):
-        st.markdown("""
-        <div class="card-hdr">
-          <div class="icon-box">💉</div>
-          <div><div class="card-title">Treatment context</div>
-               <div class="card-sub">Used to classify CINV type and risk</div></div>
-        </div>""", unsafe_allow_html=True)
-
-        tc1, tc2, tc3 = st.columns(3)
-        nv_regimen = tc1.text_input("Regimen name", placeholder="e.g. FOLFOX, AC-T")
-        nv_cycle   = tc2.number_input("Cycle #", min_value=1, max_value=50, value=None, step=1)
-        nv_day     = tc3.number_input("Day of cycle", min_value=1, max_value=28, value=None, step=1)
-
-        nv_route = st.selectbox("Route", [
-            "", "IV", "Oral", "Radiation", "Combination IV + oral", "Other",
-        ])
-
-        rc1, rc2 = st.columns(2)
-        nv_premeds     = rc1.checkbox("Antiemetic premedications received?")
-        nv_neutropenia = rc2.checkbox("Known neutropenia risk or recent low ANC?")
-
-        nv_oral_chemo_meds = st.text_input("Current oral cancer medications",
-            placeholder="e.g. capecitabine, ibrutinib, lenalidomide")
+    nv_premeds = st.checkbox("Antiemetic premedications received prior to this treatment?")
 
     # Section 2: Symptom characterization
     with st.container(border=True):
