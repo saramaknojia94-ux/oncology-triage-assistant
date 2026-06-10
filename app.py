@@ -32,12 +32,6 @@ section.main > div { max-width: 720px; margin: 0 auto; }
 .soon-badge { margin-left:auto; font-size:10px; padding:2px 6px;
               background:rgba(128,128,128,0.15); border-radius:4px;
               color:var(--text-color); opacity:0.55; }
-.face-row   { display:flex; justify-content:space-between; margin-top:10px; }
-.face-item  { display:flex; flex-direction:column; align-items:center; gap:4px; flex:1; }
-.face-circle { width:36px; height:36px; border-radius:50%; border:1px solid rgba(128,128,128,0.3);
-               display:flex; align-items:center; justify-content:center; margin:0 auto; }
-.face-lbl   { font-size:10px; color:var(--text-color); opacity:0.5; text-align:center; }
-.face-score { font-size:11px; font-weight:500; color:var(--text-color); opacity:0.7; }
 .urg-badge  { display:inline-flex; align-items:center; gap:5px; font-size:12px;
               padding:4px 10px; border-radius:8px; background:#fcebeb; color:#a32d2d; font-weight:500; }
 </style>
@@ -56,52 +50,6 @@ for k, v in {
     if k not in st.session_state:
         st.session_state[k] = v
 
-# ── Face scale renderer ───────────────────────────────────────────────────────
-_BUCKETS = {0:0, 1:2, 2:2, 3:4, 4:4, 5:6, 6:6, 7:8, 8:8, 9:8, 10:10}
-
-_FACES = [
-    (0,  "#1D9E75", "0",   "No pain",
-     '<circle cx="11" cy="11" r="9" stroke="#1D9E75" stroke-width="1.2"/>'
-     '<circle cx="8" cy="9.5" r="1.2" fill="#1D9E75"/><circle cx="14" cy="9.5" r="1.2" fill="#1D9E75"/>'
-     '<path d="M7.5 13.5 Q11 16.5 14.5 13.5" stroke="#1D9E75" stroke-width="1.2" stroke-linecap="round" fill="none"/>'),
-    (2,  "#639922", "2",   "Mild",
-     '<circle cx="11" cy="11" r="9" stroke="#639922" stroke-width="1.2"/>'
-     '<circle cx="8" cy="9.5" r="1.2" fill="#639922"/><circle cx="14" cy="9.5" r="1.2" fill="#639922"/>'
-     '<path d="M8 13.5 Q11 15.5 14 13.5" stroke="#639922" stroke-width="1.2" stroke-linecap="round" fill="none"/>'),
-    (4,  "#BA7517", "4–5", "Moderate",
-     '<circle cx="11" cy="11" r="9" stroke="#BA7517" stroke-width="1.2"/>'
-     '<circle cx="8" cy="9.5" r="1.2" fill="#BA7517"/><circle cx="14" cy="9.5" r="1.2" fill="#BA7517"/>'
-     '<path d="M8.5 14 H13.5" stroke="#BA7517" stroke-width="1.2" stroke-linecap="round"/>'),
-    (6,  "#D85A30", "6–7", "Severe",
-     '<circle cx="11" cy="11" r="9" stroke="#D85A30" stroke-width="1.2"/>'
-     '<circle cx="8" cy="9" r="1.2" fill="#D85A30"/><circle cx="14" cy="9" r="1.2" fill="#D85A30"/>'
-     '<path d="M8.5 14.5 Q11 12.5 13.5 14.5" stroke="#D85A30" stroke-width="1.2" stroke-linecap="round" fill="none"/>'),
-    (8,  "#A32D2D", "8–9", "Very severe",
-     '<circle cx="11" cy="11" r="9" stroke="#A32D2D" stroke-width="1.2"/>'
-     '<circle cx="7.5" cy="8.5" r="1.2" fill="#A32D2D"/><circle cx="14.5" cy="8.5" r="1.2" fill="#A32D2D"/>'
-     '<path d="M7.5 14 Q9 11.5 11 11" stroke="#A32D2D" stroke-width="1" stroke-linecap="round" fill="none"/>'
-     '<path d="M11 11 Q13 10.5 14.5 14" stroke="#A32D2D" stroke-width="1" stroke-linecap="round" fill="none"/>'),
-    (10, "#791F1F", "10",  "Worst",
-     '<circle cx="11" cy="11" r="9" stroke="#791F1F" stroke-width="1.2"/>'
-     '<path d="M6.5 8 L8.5 10 M8.5 8 L6.5 10" stroke="#791F1F" stroke-width="1.2" stroke-linecap="round"/>'
-     '<path d="M13.5 8 L15.5 10 M15.5 8 L13.5 10" stroke="#791F1F" stroke-width="1.2" stroke-linecap="round"/>'
-     '<path d="M7.5 14.5 Q9 12 11 11.5" stroke="#791F1F" stroke-width="1" stroke-linecap="round" fill="none"/>'
-     '<path d="M11 11.5 Q13 11 14.5 14.5" stroke="#791F1F" stroke-width="1" stroke-linecap="round" fill="none"/>'),
-]
-
-def render_faces(pain: int) -> str:
-    active = _BUCKETS[pain]
-    parts = []
-    for score, color, label, desc, inner in _FACES:
-        is_active = score == active
-        style = f"border-color:{color}; border-width:2px; background:#f3f4f6;" if is_active else ""
-        parts.append(
-            f'<div class="face-item">'
-            f'<div class="face-circle" style="{style}">'
-            f'<svg viewBox="0 0 22 22" fill="none" width="22" height="22">{inner}</svg>'
-            f'</div><div class="face-score">{label}</div><div class="face-lbl">{desc}</div></div>'
-        )
-    return f'<div class="face-row">{"".join(parts)}</div>'
 
 # ── Med mutual-exclusivity callbacks ──────────────────────────────────────────
 MED_KEYS = ["med_tylenol", "med_nsaid", "med_rx", "med_antiemetic"]
@@ -173,15 +121,14 @@ with st.container(border=True):
     <hr style="margin:14px 0;border-color:#e5e7eb;">
     """, unsafe_allow_html=True)
 
-    c1, c2 = st.columns(2)
-    location = c1.selectbox("Location *", [
-        "", "Frontal", "Occipital", "Temporal (bilateral)",
+    location = st.multiselect("Location *", [
+        "Frontal", "Occipital", "Temporal (bilateral)",
         "Temporal (unilateral)", "Vertex", "Diffuse / whole head", "Behind the eyes",
     ])
-    onset_txt = c2.text_input("Onset *", placeholder="e.g. yesterday evening")
+    onset_txt = st.text_input("Onset *", placeholder="e.g. yesterday evening")
 
     onset_char = st.radio("Onset character",
-        ["Gradual", "Sudden / thunderclap", "Woke from sleep"],
+        ["Gradual", "Sudden", "Intermittent"],
         horizontal=True, index=None)
     trajectory = st.radio("Trajectory",
         ["Worsening", "Stable", "Improving"],
@@ -195,11 +142,10 @@ with st.container(border=True):
     <div class="card-hdr">
       <div class="icon-box">🎛️</div>
       <div><div class="card-title">Severity</div>
-           <div class="card-sub">Numeric &amp; face pain scale</div></div>
+           <div class="card-sub">Numeric pain scale</div></div>
     </div>""", unsafe_allow_html=True)
 
     pain = st.slider("Pain score (0–10) *", 0, 10, 5)
-    st.markdown(render_faces(pain), unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 4. ASSOCIATED SYMPTOMS
@@ -328,7 +274,7 @@ if generate:
         f"Triage data:\n"
         f"- Patient: {int(age)} y/o with {dx}, on {tx}"
         f"{f', last treatment {last_tx}' if last_tx else ''}\n"
-        f"- Chief complaint: Headache — {location}, onset {onset_txt}"
+        f"- Chief complaint: Headache — {', '.join(location)}, onset {onset_txt}"
         f"{f', {onset_char}' if onset_char else ''}{f', {trajectory}' if trajectory else ''}\n"
         f"- Pain: {pain}/10\n"
         f"- Associated symptoms: {', '.join(assoc_sel) if assoc_sel else 'none reported'}\n"
